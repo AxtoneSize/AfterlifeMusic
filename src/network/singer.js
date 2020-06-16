@@ -5,3 +5,9 @@ export function getSingerList() {
     url: 'toplist/artist'
   })
 }
+
+export function getSingerDetail(id) {
+  return request({
+    url: `/artists?id=${id}`
+  })
+}

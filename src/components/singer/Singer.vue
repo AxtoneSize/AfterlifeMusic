@@ -1,19 +1,27 @@
 <template>
   <div class="singer">
-    <list-view :data="singers"/>
+    <list-view 
+      @select="selectSinger"
+      :data="singers"/>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import VPingYin from 'common/js/vue-py.js'
 import { getSingerList } from 'network/singer'
 
 import ListView from 'components/common/listview/ListView'
+
+import SingerDetail from 'components/singerdetail/SingerDetail'
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
 export default {
   components: {
-    ListView
+    ListView,
+    
+    SingerDetail
   },
   data() {
     return {
@@ -24,6 +32,7 @@ export default {
     this._getSingerList()
   },
   methods: {
+    // 网络请求相关方法
     _getSingerList() {
       getSingerList().then(res => {
         if (res.code === 200) {
@@ -31,6 +40,16 @@ export default {
         }
       })
     },
+
+    //元素触发的相关事件
+    selectSinger(singer) {
+      this.$router.push({
+        path: `/singer/${singer.id}`
+      })
+      this.setSinger(singer)
+    },
+
+    // 处理相关数据的方法
     _normalizeSinger(list) {
       let map = {
         hot: {
@@ -74,7 +93,12 @@ export default {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
       return hot.concat(ret)
-    }
+    },
+
+    // vuex
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    })
   },
 }
 </script>
