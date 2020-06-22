@@ -42,7 +42,7 @@
                   class="text"
                   :class="{'current': currentLineNum === index}"
                   v-for="(line, index) in currentLyric.lines"
-                  :key="line.time"
+                  :key="index"
                 >{{ line.txt }}</p>
               </div>
             </div>
@@ -519,7 +519,10 @@ export default {
   width: 70%;
   margin: 0 auto;
   line-height: 40px;
+  overflow: hidden;
+  white-space: nowrap;
   text-align: center;
+  text-overflow: ellipsis;
   font-size: 18px;
   color: #fff;
 }

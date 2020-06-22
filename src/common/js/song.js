@@ -18,8 +18,13 @@ export default class Song {
     return new Promise((resolve, reject) => {
       getLyric(this.id).then(res => {
         if(res.code === 200) {
-          this.lyric = res.lrc.lyric
-          resolve(this.lyric)
+          if(res.nolyric) {
+            this.lyric = '暂无歌词'
+            resolve(this.lyric)
+          } else {
+            this.lyric = res.lrc.lyric
+            resolve(this.lyric)
+          }
         } else {
           reject('noo lyric')
         }

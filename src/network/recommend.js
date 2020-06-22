@@ -11,3 +11,9 @@ export function getDiscList() {
     url: '/top/playlist/highquality'
   })
 }
+
+export function getSongList(id) {
+  return request({
+    url: `/playlist/detail?id=${id}`
+  })
+} 

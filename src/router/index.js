@@ -5,6 +5,13 @@ import Singer from 'components/singer/Singer'
 import Rank from 'components/rank/Rank'
 import Search from 'components/search/Search'
 import SingerDetail from 'components/singerdetail/SingerDetail'
+import Disc from 'components/disc/Disc'
+import TopList from 'components/toplist/TopList'
+
+const originalPush = VueRouter.prototype.push
+  VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 Vue.use(VueRouter)
 
@@ -15,7 +22,13 @@ Vue.use(VueRouter)
     },
     {
       path: '/recommend',
-      component: Recommend
+      component: Recommend,
+      children: [
+        {
+          path: ':id',
+          component: Disc
+        }
+      ]
     },
     {
       path: '/singer',
@@ -29,7 +42,13 @@ Vue.use(VueRouter)
     },
     {
       path: '/rank',
-      component: Rank
+      component: Rank,
+      children: [
+        {
+          path: ':id',
+          component: TopList
+        }
+      ]
     },
     {
       path: '/search',

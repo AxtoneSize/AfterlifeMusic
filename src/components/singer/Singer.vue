@@ -1,6 +1,7 @@
 <template>
-  <div class="singer">
+  <div class="singer" ref="singer">
     <list-view 
+      ref="list"
       @select="selectSinger"
       :data="singers"/>
     <router-view></router-view>
@@ -11,13 +12,15 @@
 import { mapMutations } from 'vuex'
 import VPingYin from 'common/js/vue-py.js'
 import { getSingerList } from 'network/singer'
-
+import { playListMixin } from 'common/js/mixin'
+ 
 import ListView from 'components/common/listview/ListView'
 
 import SingerDetail from 'components/singerdetail/SingerDetail'
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
 export default {
+  mixins: [playListMixin],
   components: {
     ListView,
     
@@ -32,6 +35,11 @@ export default {
     this._getSingerList()
   },
   methods: {
+    handlePlayList(playList) {
+      const bottom = playList.length > 0 ? '60px' : 0
+      this.$refs.singer.style.bottom = bottom
+      this.$refs.list.refresh()
+    },
     // 网络请求相关方法
     _getSingerList() {
       getSingerList().then(res => {

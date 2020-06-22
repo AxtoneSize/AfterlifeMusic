@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <Scroll ref="scroll" class="recommend-content" :data="discList">
       <div class="recommend-list">
         <my-swiper 
@@ -9,7 +9,7 @@
         />  
         <h1 class="list-title">热门歌单推荐</h1>
         <ul>
-          <li v-for="(item, index) in discList" :key="index" class="item">
+          <li @click="selectItem(item)" v-for="(item, index) in discList" :key="index" class="item">
             <div class="icon">
               <img v-lazy="item.img" width="60" height="60">
             </div>
@@ -28,17 +28,23 @@
         </div>
       </div>
     </Scroll>  
+    <router-view></router-view>
   </div>
 </template>
 
 
 <script>
+import { getRecommend, getDiscList } from 'network/recommend'
+import { playListMixin } from 'common/js/mixin'
+import { mapMutations } from 'vuex'
+ 
 import Scroll from 'components/common/scroll/Scroll'
 import MySwiper from 'components/common/swiper/MySwiper'
 import Loading from 'components/common/loading/Loading'
 import SongSheetList from 'components/recommend/SongSheetList'
-import { getRecommend, getDiscList } from '@/network/recommend'
+
 export default {
+  mixins: [playListMixin],
   components: {
     Scroll,
     MySwiper,
@@ -63,6 +69,20 @@ export default {
     this._getDiscList()
   },
   methods: {
+    handlePlayList(playList) {
+      const bottom = playList.length > 0 ? '60px' : 0
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
+    },
+    loadImage() {
+      this.$refs.scroll.refresh()
+    },
+    selectItem(item) {
+      this.$router.push({
+        path: `/recommend/${item.id}`
+      }),
+      this.setDisc(item)
+    },
     _getRecommend() {
       getRecommend().then( res => {
         if(res.code === 200)
@@ -73,9 +93,6 @@ export default {
           }))
         }
       })
-    },
-    loadImage() {
-      this.$refs.scroll.refresh()
     },
     _getDiscList() {
       getDiscList().then( res => {
@@ -89,7 +106,10 @@ export default {
           }))
         }
       }) 
-    }
+    },
+    ...mapMutations({
+      setDisc: 'SET_DISC'
+    })
   },
 }
 </script>
